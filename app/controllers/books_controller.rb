@@ -42,7 +42,6 @@ class BooksController < ApplicationController
       redirect_to book_path(@book.id)
     # データが正しく入力されていなかったらeditへリダイレクト
     else
-      @book = Book.find(params[:id])
       render :'books/edit'
     end
   end
