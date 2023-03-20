@@ -6,15 +6,22 @@ class BooksController < ApplicationController
   
   def create
     # データを受け取り新規登録するためのインスタンス作成
-    book = Book.new(book_params)
-    # データをデータベースに保存するためのsaveメソッド実行
-    book.save
-    # トップ画面へリダイレクト
-    redirect_to book_path(book.id)
+    @book = Book.new(book_params)
+    # データが正しく入力されていたらデータベースに保存するためのsaveメソッド実行
+    if @book.save
+    # フラッシュメッセージを定義しshowへリダイレクト
+      flash[:notice] = "Book was successfully created."
+      redirect_to book_path(@book.id)
+    # データが正しく入力されていなかったらbooksへリダイレクト
+    else
+      @books = Book.all
+      render :'books/index'
+    end
   end
 
   def index
     @books = Book.all
+    @book = Book.new
   end
 
   def show
@@ -26,9 +33,18 @@ class BooksController < ApplicationController
   end
   
   def update
-    list = List.find(params[:id])
-    list.update(list_params)
-    redirect_to list_path(list.id)
+    # データを受け取りアップデートするためのインスタンス作成
+    @book = Book.find(params[:id])
+    # データをアップデート
+    if @book.update(book_params)
+    # フラッシュメッセージを定義しshowへリダイレクト
+      flash[:notice] = "Book was successfully updated."
+      redirect_to book_path(@book.id)
+    # データが正しく入力されていなかったらeditへリダイレクト
+    else
+      @book = Book.find(params[:id])
+      render :'books/edit'
+    end
   end
   
   def destroy
